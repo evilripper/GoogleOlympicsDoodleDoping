@@ -13,36 +13,50 @@ namespace GoogleOlympicsDoodleDoping
 {
     public partial class Form1 : Form
     {
-        bool _stopThread;
 
-        private doping _workerObject;
+        private Doping _workerObject;
         private Thread _workerThread;
         
         public Form1()
         {
-            _stopThread = false;
-            _workerObject = new doping();
-            _workerThread = new Thread(_workerObject.doWork);
             InitializeComponent();
 
+            for (int i = 1; i < 101; i++)
+            {
+                cbxInterval.Items.Add(i);
+            }
+            cbxInterval.SelectedIndex = 99;
         }
 
 
         private void button1_Click(object sender, EventArgs e)
         {
-            
+            button1.Enabled = false;
+            cbxInterval.Enabled = false;
 
-            if (_stopThread)
-            {
-                _workerObject.Stop = true;
-                _workerThread.Join();  
-            }
-            else
-            {
+            _workerObject = new Doping();
+            _workerThread = new Thread(_workerObject.doWork);
 
-                _workerThread.Start();
+            _workerObject.Interval = (int)cbxInterval.SelectedItem;
+            _workerThread.Start();
+        }
+
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.C && e.Modifiers == Keys.Control)
+            {
+               
+                if (_workerThread.IsAlive)
+                {
+                    Thread.Sleep(1);
+                    _workerObject.RequestStop();
+                    _workerThread.Join();
+                    button1.Enabled = true;
+                    cbxInterval.Enabled = true;
+                }
+                MessageBox.Show("Thread stopped");
             }
-            _stopThread = !_stopThread;
+            base.OnKeyDown(e);
         }
     }
 }

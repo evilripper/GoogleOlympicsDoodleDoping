@@ -6,24 +6,37 @@ using System.Windows.Forms;
 
 namespace GoogleOlympicsDoodleDoping
 {
-    class doping
+    class Doping
     {
+        private bool _stop = false;
+        
         public bool Stop
         {
             get { return _stop; }
             set { _stop = value; }
         }
-
-        private bool _stop = false;
+        
+        private int _interval;
+        
+        public int Interval
+        {
+            get { return _interval; }
+            set { _interval = value; }
+        }
 
         public void doWork()
         {
             while (!_stop)
             {
                 SendKeys.SendWait("{LEFT}");
-                System.Threading.Thread.Sleep(50);   
+                System.Threading.Thread.Sleep(_interval);   
                 SendKeys.SendWait("{RIGHT}");
             }
+        }
+
+        internal void RequestStop()
+        {
+            _stop = true;
         }
     }
 }
